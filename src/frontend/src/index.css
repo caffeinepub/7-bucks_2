@@ -1,0 +1,149 @@
+@import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0.08 0.012 255;
+    --foreground: 0.96 0.005 255;
+    --card: 0.12 0.018 258;
+    --card-foreground: 0.94 0.006 255;
+    --popover: 0.12 0.018 258;
+    --popover-foreground: 0.94 0.006 255;
+    --primary: 0.72 0.2 210;
+    --primary-foreground: 0.08 0.012 255;
+    --secondary: 0.16 0.022 255;
+    --secondary-foreground: 0.88 0.01 255;
+    --muted: 0.14 0.016 255;
+    --muted-foreground: 0.58 0.025 255;
+    --accent: 0.65 0.22 200;
+    --accent-foreground: 0.08 0.012 255;
+    --destructive: 0.62 0.22 25;
+    --destructive-foreground: 0.98 0.005 60;
+    --border: 0.22 0.025 255;
+    --input: 0.16 0.022 255;
+    --ring: 0.72 0.2 210;
+    --radius: 0.75rem;
+    --success: 0.68 0.2 145;
+    --warning: 0.82 0.19 70;
+    --chart-1: 0.72 0.2 210;
+    --chart-2: 0.68 0.2 145;
+    --chart-3: 0.82 0.19 70;
+    --chart-4: 0.62 0.22 25;
+    --chart-5: 0.75 0.15 300;
+    --sidebar: 0.1 0.015 256;
+    --sidebar-foreground: 0.94 0.006 255;
+    --sidebar-primary: 0.72 0.2 210;
+    --sidebar-primary-foreground: 0.08 0.012 255;
+    --sidebar-accent: 0.16 0.022 255;
+    --sidebar-accent-foreground: 0.88 0.01 255;
+    --sidebar-border: 0.2 0.02 255;
+    --sidebar-ring: 0.72 0.2 210;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    color-scheme: dark;
+  }
+
+  body {
+    @apply bg-background text-foreground font-body;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+@layer components {
+  .glow-border {
+    border: 1px solid oklch(0.72 0.2 210 / 0.4);
+    box-shadow: 0 0 24px oklch(0.72 0.2 210 / 0.12), inset 0 1px 0
+      oklch(0.72 0.2 210 / 0.08);
+  }
+
+  .glow-border-strong {
+    border: 1px solid oklch(0.72 0.2 210 / 0.7);
+    box-shadow: 0 0 32px oklch(0.72 0.2 210 / 0.25), inset 0 1px 0
+      oklch(0.72 0.2 210 / 0.15);
+  }
+
+  .card-dark {
+    @apply bg-card rounded-xl;
+    background: linear-gradient(
+      135deg,
+      oklch(0.12 0.018 258),
+      oklch(0.1 0.014 262)
+    );
+    border: 1px solid oklch(0.22 0.025 255);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+  }
+
+  .amount-input {
+    @apply font-display text-5xl font-bold text-foreground bg-transparent border-0 outline-none text-center;
+    caret-color: oklch(0.72 0.2 210);
+  }
+
+  .amount-input:focus {
+    text-shadow: 0 0 20px oklch(0.72 0.2 210 / 0.4);
+  }
+
+  .step-active {
+    background: oklch(0.72 0.2 210);
+    box-shadow: 0 0 16px oklch(0.72 0.2 210 / 0.5);
+  }
+
+  .step-complete {
+    background: oklch(0.68 0.2 145);
+  }
+
+  .step-inactive {
+    background: oklch(0.16 0.022 255);
+    border: 2px solid oklch(0.22 0.025 255);
+  }
+
+  .nav-link {
+    @apply text-muted-foreground hover:text-foreground transition-colors text-sm font-medium;
+  }
+
+  .nav-link.active {
+    @apply text-primary;
+  }
+
+  .status-pending {
+    @apply bg-yellow-500/15 text-yellow-400 border-yellow-500/30;
+  }
+
+  .status-collecting,
+  .status-verifying,
+  .status-disbursing {
+    @apply bg-blue-500/15 text-blue-400 border-blue-500/30;
+  }
+
+  .status-complete {
+    @apply bg-emerald-500/15 text-emerald-400 border-emerald-500/30;
+  }
+
+  .status-failed {
+    @apply bg-red-500/15 text-red-400 border-red-500/30;
+  }
+
+  .masked-field {
+    @apply blur-sm select-none pointer-events-none;
+  }
+
+  .grid-bg {
+    background-image: linear-gradient(
+        oklch(0.22 0.025 255 / 0.3) 1px,
+        transparent 1px
+      ),
+      linear-gradient(90deg, oklch(0.22 0.025 255 / 0.3) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+}
