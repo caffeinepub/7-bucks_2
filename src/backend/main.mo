@@ -2,6 +2,7 @@ import Array "mo:core/Array";
 import Blob "mo:core/Blob";
 import Float "mo:core/Float";
 import Iter "mo:core/Iter";
+import Int "mo:core/Int";
 import List "mo:core/List";
 import Map "mo:core/Map";
 import Nat "mo:core/Nat";
@@ -224,18 +225,19 @@ actor {
     for ((_, tx) in transactions.entries()) {
       txList.add(tx);
     };
+
     txList.toArray();
   };
 
-  // HTTP Outcall to ContiPay Acquire API - Admin only (sensitive payment operation)
+  // HTTP Outcall to ContiPay Acquire API - Authenticated users only (admins and regular users)
   public shared ({ caller }) func contipayAcquire(cardDetails : Text, amountCents : Nat) : async {
     success : Bool;
     contipayRef : Text;
     errorCode : Text;
     errorMessage : Text;
   } {
-    if (not (AccessControl.isAdmin(accessControlState, caller))) {
-      Runtime.trap("Unauthorized: Only admins can call payment APIs");
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only authenticated users can call payment APIs");
     };
 
     switch (contiPayConfig) {
@@ -253,15 +255,15 @@ actor {
     };
   };
 
-  // HTTP Outcall to ContiPay Disburse API - Admin only (sensitive payment operation)
+  // HTTP Outcall to ContiPay Disburse API - Authenticated users only (admins and regular users)
   public shared ({ caller }) func contipayDisburse(ecocashNumber : Text, amountCents : Nat) : async {
     success : Bool;
     contipayRef : Text;
     errorCode : Text;
     errorMessage : Text;
   } {
-    if (not (AccessControl.isAdmin(accessControlState, caller))) {
-      Runtime.trap("Unauthorized: Only admins can call payment APIs");
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only authenticated users can call payment APIs");
     };
 
     switch (contiPayConfig) {
