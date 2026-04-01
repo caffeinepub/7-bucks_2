@@ -56,6 +56,7 @@ export default {
         },
         success: {
           DEFAULT: "oklch(var(--success))",
+          foreground: "oklch(var(--success-foreground))",
         },
         warning: {
           DEFAULT: "oklch(var(--warning))",
@@ -84,10 +85,11 @@ export default {
         sm: "calc(var(--radius) - 4px)",
       },
       boxShadow: {
-        xs: "0 1px 2px 0 rgba(0,0,0,0.05)",
-        glow: "0 0 20px rgba(56, 178, 255, 0.2)",
-        "glow-strong": "0 0 40px rgba(56, 178, 255, 0.35)",
-        "card-dark": "0 4px 24px rgba(0,0,0,0.4)",
+        xs: "0 1px 2px 0 oklch(0 0 0 / 0.05)",
+        glow: "0 0 20px oklch(var(--primary) / 0.25)",
+        "glow-strong": "0 0 40px oklch(var(--primary) / 0.4)",
+        "card-dark": "0 4px 24px oklch(0 0 0 / 0.4)",
+        "success-glow": "0 0 32px oklch(var(--success) / 0.4)",
       },
       keyframes: {
         "accordion-down": {
@@ -103,15 +105,25 @@ export default {
           "100%": { backgroundPosition: "200% 0" },
         },
         pulse_glow: {
-          "0%, 100%": { boxShadow: "0 0 8px rgba(56, 178, 255, 0.3)" },
-          "50%": { boxShadow: "0 0 24px rgba(56, 178, 255, 0.6)" },
+          "0%, 100%": { boxShadow: "0 0 8px oklch(var(--primary) / 0.3)" },
+          "50%": { boxShadow: "0 0 28px oklch(var(--primary) / 0.65)" },
+        },
+        success_glow: {
+          "0%, 100%": { boxShadow: "0 0 8px oklch(var(--success) / 0.3)" },
+          "50%": { boxShadow: "0 0 28px oklch(var(--success) / 0.65)" },
+        },
+        float: {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-4px)" },
         },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         shimmer: "shimmer 2s linear infinite",
-        pulse_glow: "pulse_glow 2s ease-in-out infinite",
+        pulse_glow: "pulse_glow 2.5s ease-in-out infinite",
+        success_glow: "success_glow 2.5s ease-in-out infinite",
+        float: "float 3s ease-in-out infinite",
       },
     },
   },

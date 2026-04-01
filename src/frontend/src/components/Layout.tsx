@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { useInternetIdentity } from "@/hooks/useInternetIdentity";
 import { useIsAdmin } from "@/hooks/useQueries";
 import { Link, useRouterState } from "@tanstack/react-router";
-import { LogIn, LogOut, Menu, X, Zap } from "lucide-react";
+import { LogIn, LogOut, Menu, Settings, X, Zap } from "lucide-react";
 import { useState } from "react";
 
 const NAV_LINKS = [
@@ -24,7 +24,7 @@ function NavLink({
       to={to}
       onClick={onClick}
       data-ocid={`nav.${label.toLowerCase().replace(/[^a-z0-9]/g, "")}.link`}
-      className={`text-sm font-medium transition-colors ${
+      className={`text-sm font-medium transition-colors px-1 py-0.5 ${
         isActive
           ? "text-primary"
           : "text-muted-foreground hover:text-foreground"
@@ -43,44 +43,56 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <div className="fixed inset-0 grid-bg opacity-40 pointer-events-none" />
+      {/* Subtle grid background */}
+      <div className="fixed inset-0 grid-bg opacity-30 pointer-events-none" />
+      {/* Top glow */}
       <div
-        className="fixed inset-0 pointer-events-none"
+        className="fixed inset-x-0 top-0 h-96 pointer-events-none"
         style={{
           background:
-            "radial-gradient(ellipse 80% 50% at 50% -10%, oklch(0.72 0.2 210 / 0.08) 0%, transparent 60%)",
+            "radial-gradient(ellipse 70% 40% at 50% -5%, oklch(0.72 0.22 210 / 0.07) 0%, transparent 60%)",
         }}
       />
 
-      <header
-        className="relative z-50 border-b border-border/50 backdrop-blur-xl"
-        style={{ background: "oklch(0.08 0.012 255 / 0.85)" }}
-      >
+      <header className="relative z-50 border-b border-border/60 backdrop-blur-xl bg-card/80">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+          {/* Logo */}
           <Link
             to="/"
             data-ocid="nav.home.link"
-            className="flex items-center gap-2 group"
+            className="flex items-center gap-2.5 group shrink-0"
           >
-            <div className="w-8 h-8 rounded-lg step-active flex items-center justify-center shrink-0">
+            <div className="w-8 h-8 rounded-lg step-active flex items-center justify-center shrink-0 transition-transform group-hover:scale-105">
               <Zap className="w-4 h-4 text-primary-foreground" />
             </div>
-            <span className="font-display font-bold text-xl text-foreground tracking-tight">
+            <span className="font-display font-bold text-xl tracking-tight">
               7 <span className="text-primary">Bucks</span>
             </span>
           </Link>
 
-          <nav className="hidden md:flex items-center gap-6">
+          {/* Desktop nav */}
+          <nav className="hidden md:flex items-center gap-1">
             {NAV_LINKS.map((link) => (
               <NavLink key={link.to} to={link.to} label={link.label} />
             ))}
             {isAdmin && <NavLink to="/admin" label="Admin" />}
           </nav>
 
+          {/* Desktop auth */}
           <div className="hidden md:flex items-center gap-3">
             {isLoggedIn ? (
               <>
-                <span className="text-xs text-muted-foreground font-mono">
+                {isAdmin && (
+                  <Link
+                    to="/admin"
+                    data-ocid="nav.admin.link"
+                    className="p-2 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
+                    title="Admin Config"
+                  >
+                    <Settings className="w-4 h-4" />
+                  </Link>
+                )}
+                <span className="text-xs text-muted-foreground font-mono bg-muted/30 px-2 py-1 rounded-md border border-border/50">
                   {identity.getPrincipal().toString().slice(0, 8)}…
                 </span>
                 <Button
@@ -88,7 +100,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   size="sm"
                   onClick={clear}
                   data-ocid="auth.logout.button"
-                  className="border-border/50 hover:border-destructive/50 hover:text-destructive"
+                  className="border-border hover:border-destructive/60 hover:text-destructive hover:bg-destructive/5 transition-all"
                 >
                   <LogOut className="w-3.5 h-3.5 mr-1.5" />
                   Logout
@@ -100,7 +112,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 onClick={login}
                 data-ocid="auth.login.button"
                 disabled={loginStatus === "logging-in"}
-                className="bg-primary text-primary-foreground hover:bg-primary/90"
+                className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-glow"
               >
                 <LogIn className="w-3.5 h-3.5 mr-1.5" />
                 {loginStatus === "logging-in" ? "Connecting…" : "Login"}
@@ -108,9 +120,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             )}
           </div>
 
+          {/* Mobile toggle */}
           <button
             type="button"
-            className="md:hidden p-2 text-muted-foreground hover:text-foreground"
+            className="md:hidden p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/20 transition-colors"
             onClick={() => setMobileOpen(!mobileOpen)}
             data-ocid="nav.menu.toggle"
           >
@@ -122,11 +135,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </button>
         </div>
 
+        {/* Mobile menu */}
         {mobileOpen && (
-          <div
-            className="md:hidden border-t border-border/50 px-4 py-4 flex flex-col gap-4"
-            style={{ background: "oklch(0.08 0.012 255 / 0.95)" }}
-          >
+          <div className="md:hidden border-t border-border/50 px-4 py-4 flex flex-col gap-3 bg-card/95 backdrop-blur-xl">
             {NAV_LINKS.map((link) => (
               <NavLink
                 key={link.to}
@@ -142,17 +153,22 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 onClick={() => setMobileOpen(false)}
               />
             )}
-            <div className="pt-2 border-t border-border/50">
+            <div className="pt-3 border-t border-border/50">
               {isLoggedIn ? (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={clear}
-                  data-ocid="auth.mobile.logout.button"
-                  className="w-full"
-                >
-                  <LogOut className="w-3.5 h-3.5 mr-1.5" /> Logout
-                </Button>
+                <div className="flex flex-col gap-2">
+                  <p className="text-xs text-muted-foreground font-mono">
+                    {identity.getPrincipal().toString().slice(0, 16)}…
+                  </p>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={clear}
+                    data-ocid="auth.mobile.logout.button"
+                    className="w-full border-border hover:border-destructive/60 hover:text-destructive"
+                  >
+                    <LogOut className="w-3.5 h-3.5 mr-1.5" /> Logout
+                  </Button>
+                </div>
               ) : (
                 <Button
                   size="sm"

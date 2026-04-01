@@ -1,5 +1,6 @@
 import Array "mo:core/Array";
 import Blob "mo:core/Blob";
+import Float "mo:core/Float";
 import Iter "mo:core/Iter";
 import List "mo:core/List";
 import Map "mo:core/Map";
@@ -13,8 +14,6 @@ import Time "mo:core/Time";
 import MixinAuthorization "authorization/MixinAuthorization";
 import AccessControl "authorization/access-control";
 import OutCall "http-outcalls/outcall";
-
-
 
 actor {
   // Initialize the access control system
@@ -289,7 +288,7 @@ actor {
         // In production, implement proper HMAC signature verification using config.apiSecret
         // For now, this is a stub that would verify the signature before proceeding
         // If signature is invalid, return false or trap
-        
+
         // Parse payload to extract transaction ID, status, and reference
         // This is stubbed - in production, parse JSON properly
         let txId = "stubbedTransactionId";
@@ -305,10 +304,10 @@ actor {
               contipayRef;
             };
             transactions.add(txId, updatedTransaction);
-            
+
             // If status is SUCCESS, trigger disburse
             // This would need to be implemented with proper async handling
-            
+
             true;
           };
         };

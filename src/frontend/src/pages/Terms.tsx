@@ -34,7 +34,7 @@ const sections: Section[] = [
       "ALL DISBURSEMENTS TO THE ECOCASH NETWORK ARE FINAL AND NON-REVERSIBLE ONCE CONFIRMED BY THE 7 BUCKS SYSTEM.",
       "Confirmation occurs only after a cryptographically signed SUCCESS status is received from ContiPay via server-to-server verification.",
       "It is the sender's sole responsibility to verify the recipient's EcoCash number before submitting. Funds sent to an incorrect number cannot be recovered.",
-      "Transaction statuses of 'complete' indicate funds have been dispatched to the EcoCash network.",
+      "Transaction statuses of 'completed' indicate funds have been dispatched to the EcoCash network.",
     ],
   },
   {
@@ -63,8 +63,18 @@ const sections: Section[] = [
     content: [
       "These Terms are governed by the laws of the Republic of Zimbabwe.",
       "Any disputes shall be subject to the exclusive jurisdiction of the courts of Zimbabwe.",
-      "Mahachi Desmond Private Limited reserves the right to amend these Terms at any time.",
+      "Mahachi Desmond Private Limited reserves the right to amend these Terms at any time with notice.",
       "Contact: legal@mahachi.co.zw — Mahachi Desmond Private Limited, Harare, Zimbabwe.",
+    ],
+  },
+  {
+    id: "privacy",
+    title: "7. Data Privacy",
+    content: [
+      "Personal data collected during transactions (name, national ID, phone number, email) is used solely for processing payments via ContiPay.",
+      "Card details are transmitted directly to ContiPay's PCI-DSS compliant infrastructure and are never stored on the 7 Bucks system.",
+      "Transaction records are retained for a minimum of 7 years as required by Zimbabwean financial regulations.",
+      "We do not sell or share personal data with third parties beyond what is required to process your transaction.",
     ],
   },
 ];
@@ -77,35 +87,36 @@ export default function Terms() {
         animate={{ opacity: 1, y: 0 }}
         className="mb-10"
       >
-        <h1 className="font-display font-bold text-4xl text-foreground mb-3">
-          Terms & Conditions
+        <h1 className="font-display font-bold text-4xl mb-3">
+          Terms &amp; Conditions
         </h1>
         <p className="text-muted-foreground text-sm">
-          Last updated: March 2026 · Mahachi Desmond Private Limited (Reg:
+          Last updated: April 2026 · Mahachi Desmond Private Limited (Reg:
           24167A02122024)
         </p>
       </motion.div>
 
-      <div className="space-y-6">
+      <div className="space-y-4">
         {sections.map((section, i) => (
           <motion.div
             key={section.id}
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.06 }}
+            transition={{ delay: i * 0.05 }}
             className="card-dark p-6 rounded-2xl"
             data-ocid={`terms.${section.id}.panel`}
           >
-            <h2 className="font-display font-bold text-base text-foreground mb-4">
+            <h2 className="font-display font-bold text-base mb-4 text-foreground">
               {section.title}
             </h2>
             <ul className="space-y-3">
               {section.content.map((para, j) => (
                 <li
                   key={`${section.id}-${j}`}
-                  className="text-sm text-muted-foreground leading-relaxed"
+                  className="text-sm text-muted-foreground leading-relaxed flex gap-2"
                 >
-                  {para}
+                  <span className="text-border shrink-0 mt-0.5">•</span>
+                  <span>{para}</span>
                 </li>
               ))}
             </ul>
