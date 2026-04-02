@@ -128,7 +128,7 @@ function FeeBreakdown({ grossCents }: { grossCents: bigint | null }) {
             ${total !== null ? total.toFixed(2) : "—"}
           </span>
         </div>
-        <div className="flex justify-between items-center bg-primary/8 rounded-lg px-3 py-2">
+        <div className="flex items-center justify-between bg-primary/8 rounded-lg px-3 py-2">
           <span className="font-semibold text-foreground">Recipient Gets</span>
           <span className="font-display font-bold text-xl text-primary">
             ${net !== null ? net.toFixed(2) : "—"}
@@ -164,15 +164,6 @@ function ProcessingStepper({
     { num: 2, label: "Verifying Settlement", icon: Wifi },
     { num: 3, label: "Payout to EcoCash", icon: Banknote },
   ];
-
-  const currentNum =
-    phase === "success"
-      ? 4
-      : phase === "error" || phase === "refunded"
-        ? -1
-        : typeof phase === "number"
-          ? phase
-          : 0;
 
   if (phase === "success") {
     return (
@@ -260,6 +251,65 @@ function ProcessingStepper({
     );
   }
 
+  if (phase === "error") {
+    return (
+      <motion.div
+        key="error"
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="card-dark p-8 rounded-2xl text-center space-y-6 border-destructive/30"
+        data-ocid="error.panel"
+      >
+        <motion.div
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{
+            type: "spring",
+            stiffness: 220,
+            damping: 16,
+            delay: 0.1,
+          }}
+          className="w-20 h-20 rounded-full bg-destructive/20 border border-destructive/40 flex items-center justify-center mx-auto"
+        >
+          <AlertCircle className="w-10 h-10 text-destructive" />
+        </motion.div>
+        <div>
+          <h2 className="font-display font-bold text-2xl mb-2 text-destructive">
+            Transaction Failed
+          </h2>
+          <p className="text-muted-foreground text-sm">
+            {error || "An error occurred. Please try again or contact support."}
+          </p>
+        </div>
+        {txId && (
+          <p className="text-xs text-muted-foreground font-mono break-all">
+            Ref: {txId}
+          </p>
+        )}
+        <Button
+          variant="outline"
+          onClick={onReset}
+          data-ocid="error.retry.secondary_button"
+          className="border-border hover:border-primary/50"
+        >
+          Try Again
+        </Button>
+        <p className="text-xs text-muted-foreground">
+          Need help? Contact us at{" "}
+          <a
+            href="mailto:support@contipay.co.zw"
+            className="text-primary underline"
+          >
+            support@contipay.co.zw
+          </a>
+        </p>
+      </motion.div>
+    );
+  }
+
+  // At this point phase is narrowed to 0 | 1 | 2 | 3
+  const currentNum = phase as number;
+
   return (
     <div
       className="card-dark glow-border p-8 rounded-2xl space-y-8"
@@ -270,40 +320,33 @@ function ProcessingStepper({
         {steps.map((step, idx) => {
           const isDone = currentNum > step.num;
           const isActive = currentNum === step.num;
-          const isError = phase === "error" && isActive;
           return (
             <div key={step.num} className="flex items-center">
               <div className="flex flex-col items-center gap-2">
                 <div
                   className={`w-11 h-11 rounded-full flex items-center justify-center transition-all duration-500 ${
-                    isError
-                      ? "bg-destructive/20 border border-destructive/50"
-                      : isDone
-                        ? "step-complete"
-                        : isActive
-                          ? "step-active animate-pulse_glow"
-                          : "step-inactive"
+                    isDone
+                      ? "step-complete"
+                      : isActive
+                        ? "step-active animate-pulse_glow"
+                        : "step-inactive"
                   }`}
                 >
                   {isDone ? (
                     <CheckCircle2 className="w-5 h-5 text-success-foreground" />
-                  ) : isActive && !isError ? (
+                  ) : isActive ? (
                     <Loader2 className="w-5 h-5 text-primary-foreground animate-spin" />
-                  ) : isError ? (
-                    <AlertCircle className="w-5 h-5 text-destructive" />
                   ) : (
                     <step.icon className="w-4 h-4 text-muted-foreground" />
                   )}
                 </div>
                 <span
                   className={`text-xs font-medium text-center max-w-[80px] leading-tight ${
-                    isActive && !isError
+                    isActive
                       ? "text-primary"
                       : isDone
                         ? "text-success"
-                        : isError
-                          ? "text-destructive"
-                          : "text-muted-foreground"
+                        : "text-muted-foreground"
                   }`}
                 >
                   {step.label}
@@ -323,41 +366,18 @@ function ProcessingStepper({
 
       {/* Status message */}
       <div className="text-center">
-        {!error && (
-          <p className="text-sm text-muted-foreground">
-            {phase === 0 && "Initiating transaction…"}
-            {phase === 1 && "Authorizing your Visa card with ContiPay…"}
-            {phase === 2 && "Settlement confirmed — verifying with ContiPay…"}
-            {phase === 3 && "Disbursing funds to EcoCash…"}
-          </p>
-        )}
+        <p className="text-sm text-muted-foreground">
+          {phase === 0 && "Initiating transaction…"}
+          {phase === 1 && "Authorizing your Visa card with ContiPay…"}
+          {phase === 2 && "Settlement confirmed — verifying with ContiPay…"}
+          {phase === 3 && "Disbursing funds to EcoCash…"}
+        </p>
         {txId && (
           <p className="text-xs font-mono text-muted-foreground/60 mt-2 break-all">
             TX: {txId}
           </p>
         )}
       </div>
-
-      {/* Error */}
-      {error && (
-        <div className="flex flex-col items-center gap-4">
-          <div
-            className="flex items-start gap-2 p-4 rounded-xl bg-destructive/10 border border-destructive/30 w-full"
-            data-ocid="processing.error_state"
-          >
-            <AlertCircle className="w-4 h-4 text-destructive shrink-0 mt-0.5" />
-            <p className="text-sm text-destructive">{error}</p>
-          </div>
-          <Button
-            variant="outline"
-            onClick={onReset}
-            data-ocid="processing.retry.secondary_button"
-            className="border-border hover:border-primary/50"
-          >
-            Try Again
-          </Button>
-        </div>
-      )}
     </div>
   );
 }
@@ -414,6 +434,13 @@ export default function SendMoney() {
 
   /* ── Watch transaction status for processing ── */
   useEffect(() => {
+    // Never override a terminal state — success/error/refunded are sticky
+    if (
+      processingPhase === "success" ||
+      processingPhase === "error" ||
+      processingPhase === "refunded"
+    )
+      return;
     if (!txId || formStep !== 3) return;
     const tx = transactions?.find((t) => t.id === txId);
     if (!tx) return;
@@ -434,9 +461,10 @@ export default function SendMoney() {
       setProcessingPhase("success");
     } else if (status === TransactionStatus.failed) {
       stopPolling();
+      setProcessingPhase("error");
       setError(getErrorMessage(tx.errorMessage, tx.errorMessage || undefined));
     }
-  }, [transactions, txId, formStep, stopPolling]);
+  }, [transactions, txId, formStep, processingPhase, stopPolling]);
 
   /* ── Helpers ── */
   const setRecipientField = (field: keyof RecipientForm, value: string) =>
@@ -588,6 +616,7 @@ export default function SendMoney() {
         stopPolling();
         setProcessingPhase("success");
       } else {
+        stopPolling();
         setError(
           getErrorMessage(
             disburseResult.errorCode,
@@ -1108,7 +1137,7 @@ export default function SendMoney() {
             </div>
 
             <p className="text-center text-xs text-muted-foreground">
-              🔒 Full card details are transmitted securely to ContiPay's
+              🔒 Full card details are transmitted securely to ContiPay&apos;s
               PCI-DSS compliant API. Not stored on-chain.
             </p>
           </motion.div>
